@@ -18,21 +18,21 @@ class Classifier:
 
     nsfw_model = None
 
-    def __init__(self):
+    def __init__(self, model_path):
         """
         model = Classifier()
         """
-        url = "https://github.com/notAI-tech/NudeNet/releases/download/v0/classifier_model.onnx"
-        home = os.path.expanduser("~")
-        model_folder = os.path.join(home, ".NudeNet/")
-        if not os.path.exists(model_folder):
-            os.mkdir(model_folder)
+        # url = "https://github.com/notAI-tech/NudeNet/releases/download/v0/classifier_model.onnx"
+        # home = os.path.expanduser("~")
+        # model_folder = os.path.join(home, ".NudeNet/")
+        # if not os.path.exists(model_folder):
+        #     os.mkdir(model_folder)
 
-        model_path = os.path.join(model_folder, os.path.basename(url))
+        # model_path = os.path.join(model_folder, os.path.basename(url))
 
-        if not os.path.exists(model_path):
-            print("Downloading the checkpoint to", model_path)
-            pydload.dload(url, save_to_path=model_path, max_time=None)
+        # if not os.path.exists(model_path):
+        #     print("Downloading the checkpoint to", model_path)
+        #     pydload.dload(url, save_to_path=model_path, max_time=None)
 
         self.nsfw_model = onnxruntime.InferenceSession(model_path)
 
@@ -96,7 +96,7 @@ class Classifier:
 
     def classify(
         self,
-        image_paths=[],
+        img,
         batch_size=4,
         image_size=(256, 256),
         categories=["unsafe", "safe"],
@@ -108,11 +108,9 @@ class Classifier:
             image_size: size to which the image needs to be resized
             categories: since the model predicts numbers, categories is the list of actual names of categories
         """
-        if not isinstance(image_paths, list):
-            image_paths = [image_paths]
 
         loaded_images, loaded_image_paths = load_images(
-            image_paths, image_size, image_names=image_paths
+            [img], image_size, image_names=["image_paths"]
         )
 
         if not loaded_image_paths:

@@ -24,7 +24,7 @@ if pil_image is not None:
 
 
 def load_img(
-    path, grayscale=False, color_mode="rgb", target_size=None, interpolation="nearest"
+    img, grayscale=False, color_mode="rgb", target_size=None, interpolation="nearest"
 ):
     """Loads an image into PIL format.
     
@@ -51,11 +51,11 @@ def load_img(
             "Could not import PIL.Image. " "The use of `load_img` requires PIL."
         )
 
-    if isinstance(path, (str, io.IOBase)):
-        img = pil_image.open(path)
-    else:
-        path = cv2.cvtColor(path, cv2.COLOR_BGR2RGB)
-        img = pil_image.fromarray(path)
+    # if isinstance(path, (str, io.IOBase)):
+    #     img = pil_image.open(path)
+    # else:
+    #     path = cv2.cvtColor(path, cv2.COLOR_BGR2RGB)
+    #     img = pil_image.fromarray(path)
 
     if color_mode == "grayscale":
         if img.mode != "L":
@@ -114,7 +114,7 @@ def img_to_array(img, data_format="channels_last", dtype="float32"):
     return x
 
 
-def load_images(image_paths, image_size, image_names):
+def load_images(images, image_size, image_names):
     """
     Function for loading images into numpy arrays for passing to model.predict
     inputs:
@@ -129,14 +129,14 @@ def load_images(image_paths, image_size, image_names):
     loaded_images = []
     loaded_image_paths = []
 
-    for i, img_path in enumerate(image_paths):
+    for i, img in enumerate(images):
         try:
-            image = load_img(img_path, target_size=image_size)
+            image = load_img(img, target_size=image_size)
             image = img_to_array(image)
             image /= 255
             loaded_images.append(image)
             loaded_image_paths.append(image_names[i])
         except Exception as ex:
-            logging.exception(f"Error reading {img_path} {ex}", exc_info=True)
+            logging.exception(f"Error reading {ex}", exc_info=True)
 
     return np.asarray(loaded_images), loaded_image_paths

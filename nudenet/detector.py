@@ -28,35 +28,51 @@ FILE_URLS = {
 
 class Detector:
     detection_model = None
-    classes = None
 
-    def __init__(self, model_name="default"):
+    def __init__(self, model_path, model_name="default"):
         """
         model = Detector()
         """
-        checkpoint_url = FILE_URLS[model_name]["checkpoint"]
-        classes_url = FILE_URLS[model_name]["classes"]
+        # checkpoint_url = FILE_URLS[model_name]["checkpoint"]
+        # classes_url = FILE_URLS[model_name]["classes"]
 
-        home = os.path.expanduser("~")
-        model_folder = os.path.join(home, f".NudeNet/")
-        if not os.path.exists(model_folder):
-            os.makedirs(model_folder)
+        # home = os.path.expanduser("~")
+        # model_folder = os.path.join(home, f".NudeNet/")
+        # if not os.path.exists(model_folder):
+        #     os.makedirs(model_folder)
 
-        checkpoint_name = os.path.basename(checkpoint_url)
-        checkpoint_path = os.path.join(model_folder, checkpoint_name)
-        classes_path = os.path.join(model_folder, "classes")
+        # checkpoint_name = os.path.basename(checkpoint_url)
+        # checkpoint_path = os.path.join(model_folder, checkpoint_name)
+        # classes_path = os.path.join(model_folder, "classes")
 
-        if not os.path.exists(checkpoint_path):
-            print("Downloading the checkpoint to", checkpoint_path)
-            pydload.dload(checkpoint_url, save_to_path=checkpoint_path, max_time=None)
+        # if not os.path.exists(checkpoint_path):
+        #     print("Downloading the checkpoint to", checkpoint_path)
+        #     pydload.dload(checkpoint_url, save_to_path=checkpoint_path, max_time=None)
 
-        if not os.path.exists(classes_path):
-            print("Downloading the classes list to", classes_path)
-            pydload.dload(classes_url, save_to_path=classes_path, max_time=None)
+        # if not os.path.exists(classes_path):
+        #     print("Downloading the classes list to", classes_path)
+        #     pydload.dload(classes_url, save_to_path=classes_path, max_time=None)
 
-        self.detection_model = onnxruntime.InferenceSession(checkpoint_path)
+        self.detection_model = onnxruntime.InferenceSession(model_path)
 
-        self.classes = [c.strip() for c in open(classes_path).readlines() if c.strip()]
+        self.classes = [
+            "EXPOSED_ANUS",
+            "EXPOSED_ARMPITS",
+            "COVERED_BELLY",
+            "EXPOSED_BELLY",
+            "COVERED_BUTTOCKS",
+            "EXPOSED_BUTTOCKS",
+            "FACE_F",
+            "FACE_M",
+            "COVERED_FEET",
+            "EXPOSED_FEET",
+            "COVERED_BREAST_F",
+            "EXPOSED_BREAST_F",
+            "COVERED_GENITALIA_F",
+            "EXPOSED_GENITALIA_F",
+            "EXPOSED_BREAST_M",
+            "EXPOSED_GENITALIA_M"
+        ]
 
     def detect_video(
         self, video_path, mode="default", min_prob=0.6, batch_size=2, show_progress=True
@@ -130,13 +146,13 @@ class Detector:
 
         return all_results
 
-    def detect(self, img_path, mode="default", min_prob=None):
+    def detect(self, img, mode="default", min_prob=None):
         if mode == "fast":
-            image, scale = preprocess_image(img_path, min_side=480, max_side=800)
+            image, scale = preprocess_image(img, min_side=480, max_side=800)
             if not min_prob:
                 min_prob = 0.5
         else:
-            image, scale = preprocess_image(img_path)
+            image, scale = preprocess_image(img)
             if not min_prob:
                 min_prob = 0.6
 

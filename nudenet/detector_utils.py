@@ -4,16 +4,16 @@ import numpy as np
 from PIL import Image
 
 
-def read_image_bgr(path):
+def read_image_bgr(img):
     """ Read an image in BGR format.
     Args
         path: Path to the image.
     """
-    if isinstance(path, str):
-        image = np.ascontiguousarray(Image.open(path).convert("RGB"))
-    else:
-        path = cv2.cvtColor(path, cv2.COLOR_BGR2RGB)
-        image = np.ascontiguousarray(Image.fromarray(path))
+    # if isinstance(path, str):
+    image = np.ascontiguousarray(img.convert("RGB"))
+    # else:
+    #     path = cv2.cvtColor(path, cv2.COLOR_BGR2RGB)
+    #     image = np.ascontiguousarray(Image.fromarray(path))
 
     return image[:, :, ::-1]
 
